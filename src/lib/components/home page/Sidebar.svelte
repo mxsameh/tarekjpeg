@@ -79,6 +79,8 @@
   position: sticky;
   top: 0;
   left: 0;
+  flex-shrink: 0;
+  flex-grow: 0;
 }  
 .logo{
   text-transform: uppercase;
