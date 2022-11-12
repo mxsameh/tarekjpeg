@@ -23,6 +23,7 @@ button{
 }
 
 img{
+  display: block;
   border: none;
   outline: none;
   border-image: none;

@@ -2,28 +2,23 @@ import { writable } from "svelte/store"
 
 const data = [
   {
-    album:'',
-    artist:'',
-    img:''
+    name:'alomek',
+    artist:'marwan moussa',
+    img:'/mm.jpg'
   },
   {
-    album:'',
-    artist:'',
-    img:''
+    name:'free',
+    artist:'marwan pablo',
+    img:'/mp.jpg'
   },
   {
-    album:'',
-    artist:'',
-    img:''
-  },
-  {
-    album:'',
-    artist:'',
-    img:''
+    name:'pubg',
+    artist:'wegz',
+    img:'/wegz.jpg'
   },
 
 ]
 
-const albumCovers = writable(data)
+const albums = writable(data)
 
-export default albumCovers
+export default albums
