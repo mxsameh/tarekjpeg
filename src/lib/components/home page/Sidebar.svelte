@@ -10,7 +10,7 @@
 		},
 		{
 			title: 'album covers',
-			link: ''
+			link: '/album-covers'
 		},
 		{
 			title: 'commissioned projects',

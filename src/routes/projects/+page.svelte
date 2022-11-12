@@ -1,9 +1,11 @@
 <script lang="ts">
+	import ProjectsImages from '$lib/components/projects page/ProjectsImages.svelte';
+	import ProjectsList from '$lib/components/projects page/ProjectsList.svelte';
 	import lerp from '$lib/utils/lerp';
 	import gsap from 'gsap';
 	import { onMount } from 'svelte';
 
-	const projects = [
+	const projectsData = [
 		{
 			name: 'Pepsi Black',
 			link: '',
@@ -71,202 +73,97 @@
 		}
 	];
 
-	let projectsList: HTMLUListElement;
-	let projectsImages: HTMLDivElement;
-	let projectsListHeight: number;
+	/*-----------------------------------
+	/*  VARIABLES
+	/*----------------------------------*/
+	let projects : NodeListOf <Element>;
+	let projectsLinks : NodeListOf <Element>;
+
+	let projectHeight: number;
+	let projectsHeight: number;
+	let lastProjectY: number;
+
+	let scrollY: number = 0;
+	let y: number = 0;
+
+
+	// CALCULATE DIMENSIONS
+	const calculateDimensions = () =>
+	{
+		projectHeight = projects[0].clientHeight;
+		projectsHeight = projectHeight * projects.length;
+		lastProjectY = projectsHeight - projectHeight;
+	};
+	 
+	// 	SCROLL PROJECTS
+	const scrollProjects = ( scroll : number ) =>
+	{
+		gsap.set(projects, {
+			y: (i) => {
+				let pos = i * projectHeight + scroll;
+				let y = gsap.utils.wrap(-projectHeight, lastProjectY, pos);
+				return y;
+			}
+		});
+	};
+
+	// CALCULATE PROJECT POSITIONS
+	const positionProjects = () =>
+	{
+		// update scroll position
+		y = lerp(y, scrollY, 0.1);
+		scrollProjects(y);
+
+		// calculate scroll speed
+		let scrollSpeed = Math.round(scrollY - y);
+
+		// animate scrolling
+		gsap.to(projectsLinks, {
+			scale: () => {
+				let speed = Math.abs(scrollSpeed * 0.0025);
+				let scale = gsap.utils.clamp(1, 2, speed);
+				return scale;
+			},
+			duration: 0.7
+		});
+
+		requestAnimationFrame(positionProjects);
+	};
+
+	// HANDLE SCROLL EVENT
+	const handleScroll = ( e : any) =>
+	{
+			scrollY -= e.deltaY;
+	}
+
 
 	onMount(() => {
-		const $projects = projectsList.querySelectorAll('.project');
-		const $projectsLinks = document.querySelectorAll('.project-link');
-		const $projectsImages = document.querySelectorAll('.project-image');
+		projects = document.querySelectorAll('.project');
+		projectsLinks = document.querySelectorAll('.project-link');
 
-		let projectHeight: number;
-		let projectsHeight: number;
-		let lastProjectY: number;
-
-		const calculateElements = () => {
-			projectHeight = $projects[0].clientHeight;
-			projectsHeight = projectHeight * $projects.length;
-			lastProjectY = projectsHeight - projectHeight;
-		};
-		calculateElements();
-
-		let scrollY: number = 0;
-		let y: number = 0;
-		let scrollSpeed: number = 0;
-		let oldScroll: number = 0;
-
-		// POSITION THE PROJECT Y POSITION // SCROLL PROJECTS
-		const positionProject = (scroll: number) => {
-			gsap.set($projects, {
-				y: (i) => {
-					let pos = i * projectHeight + scroll;
-					let y = gsap.utils.wrap(-projectHeight, lastProjectY, pos);
-					return y;
-				}
-			});
-		};
-
-		// UPDATE POSITION
-		const updatePosition = () => {
-			y = lerp(y, scrollY, 0.1);
-			positionProject(y);
-
-			oldScroll = y;
-			scrollSpeed = Math.round(scrollY - y);
-
-			gsap.to($projectsLinks, {
-				scale: () => {
-					let speed = Math.abs(scrollSpeed * 0.0025);
-					let scale = gsap.utils.clamp(1, 2, speed);
-					return scale;
-				},
-				duration: 0.7
-			});
-
-			requestAnimationFrame(updatePosition);
-		};
-		updatePosition();
+		calculateDimensions();
+		positionProjects();
 
 		// WHEEL EVENT LISTENER
-		projectsList.addEventListener('wheel', (e) => {
-			scrollY -= e.deltaY;
-		});
+		window.addEventListener('wheel', handleScroll);
 
 		// RESIZE EVENT LISTENER
-		window.addEventListener('resize', () => {
-			calculateElements();
-		});
+		window.addEventListener('resize', calculateDimensions);
 
-		// MOUSE IN EVENT LISTENER
 	});
 
-	const getImage = (e : any) =>
-	{
-		const key = parseInt(e.target.dataset.projectKey);
-		const img = projectsImages.children[key] as HTMLElement;
-		return img
-	}
-
-	const viewProjectImage = (e: any) => {
-		const img = getImage(e)
-
-		gsap.from(img, {
-			scale : .8,
-			rotate : "random(10,20)",
-		})
-		img.style.opacity = '1';
-	};
-
-
-	const hideProjectImage = (e: any) => 
-	{
-		const img = getImage(e)
-		img.style.opacity = '0';
-	};
-
-	const moveImage = (e : any) =>
-	{
-		let mousePosition =
-		{
-			// x : (e.x - ((window.innerWidth - e.target.clientWidth) / 2)) / e.target.clientWidth,
-			x : (e.x - e.target.offsetLeft) / e.target.clientWidth,
-			y : (e.y - ((e.target.scrollTop - e.target.clientHeight) / 2)) / e.target.clientHeight
-		}
-		const img = getImage(e);
-		gsap.set(img, {
-			x : mousePosition.x * 40,
-			duration : .3,
-			ease: 'slow'
-		})
-
-	}
 
 
 </script>
 
 <main class="projects">
-	<ul class="projects-list" bind:this={projectsList} bind:clientHeight={projectsListHeight}>
-		{#each projects as project, i}
-			<li class="project" style:transform={`translate(0, ${i * 100}px)`}>
-				<a
-					data-project-Name={project.name}
-					data-project-Key={i}
-					href={project.link}
-					class="project-link"
-					on:mouseenter={viewProjectImage}
-					on:mouseleave={hideProjectImage}
-					on:mousemove={moveImage}
-				>
-					{project.name}
-					</a>
-			</li>
-		{/each}
-	</ul>
 
-	<div class="projects-images" bind:this={projectsImages}>
-		{#each projects as project, i}
-			<img data-projectImageIndex={i} src={project.img} class="project-img" alt="" />
-		{/each}
-	</div>
+	<ProjectsList projects={projectsData} />
+
+	<ProjectsImages projects={projectsData}/>
+
 </main>
 
 <style lang="scss">
-	.projects-list {
-		height: 100vh;
-		width: 100vw;
-		overflow: hidden;
-		position: relative;
-	}
-	.project {
-		position: absolute;
-		width: 100%;
-		padding: 1vw 0;
-		top: 0;
-		left: 0;
-		z-index: 1;
-		display: flex;
-		justify-content: center;
-	}
-	.project-link {
-		font-size: 6vw;
-		display: block;
-		text-align: center;
-		user-select: none;
-		position: relative;
-		mix-blend-mode: multiply;
-		&:before {
-			visibility: visible;
-			content: attr(data-project-name);
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 0;
-			overflow: hidden;
-			z-index: 2;
-			transition: width 0.7s cubic-bezier(1, 0, 0, 1);
-			white-space: nowrap;
-			color: red;
-		}
-		&:hover {
-			transform: scale(.8);
-			visibility: hidden;
-			transition: visibility 0s 0.7s linear;
-		}
-		&:hover::before {
-			width: 100%;
-		}
-	}
 
-	.project-img {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		width: 20vw;
-		aspect-ratio: 1/1.5;
-		z-index: -1;
-		object-fit: cover;
-		opacity: 0;
-	}
 </style>

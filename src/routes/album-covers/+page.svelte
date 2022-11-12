@@ -30,7 +30,6 @@
 			tl.to($titleWraper, {
 				y: `${100 * direction}%`,
 				duration: 1,
-				ease: 'linear',
 				onComplete: () => {
 					// change album
 					i++;
