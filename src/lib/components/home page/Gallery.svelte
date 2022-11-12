@@ -13,25 +13,24 @@
 </script>
 
 <div class="gallery">
-
-  {#each imgs as img}
-  <img src={img} alt="" class="img">
-  {/each}
-
+	{#each imgs as img}
+		<img src={img} alt="" class="img" />
+	{/each}
 </div>
 
 <style lang="scss">
-  .gallery{
-    width: 100%;
-    column-count: 3;
-    gap: 12px;
-    padding: 24px 0;
-  }
-  .img{
-    width: 100%;
-    cursor: pointer;
-    &:hover{
-      opacity: .9;
-    }
-  }
+	.gallery {
+		width: 100%;
+		column-count: 3;
+		gap: 12px;
+		padding: 24px 0;
+	}
+	.img {
+		width: 100%;
+		cursor: pointer;
+		margin-top: 8px;
+		&:hover {
+			opacity: 0.9;
+		}
+	}
 </style>
