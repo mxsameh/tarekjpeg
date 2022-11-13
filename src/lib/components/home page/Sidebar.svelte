@@ -104,7 +104,6 @@
 		text-transform: capitalize;
 		font-size: 20px;
 		font-weight: 500;
-		cursor: pointer;
 	}
 	.inactive {
 		&:hover {
@@ -138,7 +137,6 @@
 	}
 	.work-item {
 		font-size: 16px;
-		cursor: pointer;
 		&:hover {
 			color: gray;
 		}

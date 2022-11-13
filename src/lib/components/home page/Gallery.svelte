@@ -27,7 +27,6 @@
 	}
 	.img {
 		width: 100%;
-		cursor: pointer;
 		margin-top: 8px;
 		&:hover {
 			opacity: 0.9;
