@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+
 	const projects = [
 		{
 			title: 'viral photos',
@@ -29,6 +30,7 @@
 			link: ''
 		}
 	];
+
 </script>
 
 <!-- flex container -->
@@ -36,7 +38,7 @@
 	<!-- header with logo and subtitle -->
 	<header class="header">
 		<a href="/" class="logo-link">
-			<h1 class="logo">ahmed<br />tarek</h1>
+			<h1 class="logo"> ahmed<br />tarek</h1>
 		</a>
 		<p class="subtitle">photographer</p>
 	</header>
